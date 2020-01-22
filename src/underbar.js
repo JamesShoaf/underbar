@@ -98,6 +98,12 @@
     if (isSorted){
       var result = [];
       var buffer
+      //applies iterator to each element, then adds the element to the result array
+      //if the result of iterating over the last element added to the array does not match
+      //the result of iterating over the current element.
+      //To avoid duplicates, this means that the output of iterating over the array must be sorted
+      //as opposed to the array itself.
+      //(ie f(arr[0]), f(arr[1]), f(arr[2])... would need to be sorted by index, not arr[0], arr[1]...)
       if(iterator){
         for(var i = 0; i < array.length; i++){
           var iterated = iterator(array[i]);
@@ -108,6 +114,7 @@
         }
         return result;
       }
+
       for (var i = 0; i < array.length; i++){
         if (array[i] !== buffer){
           result.push(array[i]);
@@ -212,12 +219,53 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+
+    //returns true if passed an empty array
+    if (Array.isArray(collection) && collection.length === 0){
+        return true;
+    }
+    //also returns true if passed an empty object
+    if (!Array.isArray(collection) && Object.keys(collection).length === 0){
+      return true;
+    }
+    //implements a callback function to evaluate truth if no callback is provided
+    if (!iterator){
+      iterator = function(element){
+        if (element){
+          return true;
+        } else {
+          return false;
+        }
+      };
+    }
+    //assumes all elements pass, then tests each element to falsify assumption
+    return _.reduce(collection, function(passedAllTests, element){
+      if (!passedAllTests) {
+        return false;
+      }
+      //typecasts result of truth test to boolean
+      if (iterator(element)){
+        return true;
+      } else {
+        return false;
+      };
+    }, true);
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    if (!iterator){
+      iterator = function(element){
+        if (element){
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+    return !_.every(collection, function(x){return !iterator(x);})
   };
 
 
@@ -240,11 +288,28 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    var newObj = obj;
+    for (var i = 1; i < arguments.length; i++){
+      for (var prop in arguments[i]){
+        newObj[prop] = arguments[i][prop];
+      }
+    }
+
+    return newObj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    for (var i = 1; i < arguments.length; i++){
+      for (var prop in arguments[i]){
+        if(obj[prop] === undefined){
+          obj[prop] = arguments[i][prop];
+        }
+      }
+    }
+
+    return obj;
   };
 
 
