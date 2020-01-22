@@ -98,6 +98,16 @@
     if (isSorted){
       var result = [];
       var buffer
+      if(iterator){
+        for(var i = 0; i < array.length; i++){
+          var iterated = iterator(array[i]);
+          if(iterated !== buffer){
+            result.push(array[i]);
+            buffer = iterated;
+          }
+        }
+        return result;
+      }
       for (var i = 0; i < array.length; i++){
         if (array[i] !== buffer){
           result.push(array[i]);
