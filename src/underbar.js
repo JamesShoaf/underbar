@@ -362,44 +362,6 @@
       }
       return results[argString];
     }
-
-
-
-
-    //starting over with results array as an object instead
-    // var results = [];
-
-    // return function(){
-    //   //if no results have been memorized
-    //   if (results.length === 0){
-    //     //calculate the result of the current arguments
-    //     var currentResult = func.apply(this, arguments);
-    //     //and push the arguments and that result to the memorized results array
-    //     results.push([arguments, currentResult]);
-    //     return currentResult;
-    //   }
-    //   //if any results exist
-    //   else {
-    //     //iterate through the results array and arguments
-    //     for (var i = 0; i < results.length; i++) {
-    //       for (var j = 0; j < arguments.length; j++) {
-    //         //if any arguments mismatch, skip to the next [arguments, result] array in results
-    //         if (results[i][0][j] !== arguments[j]) {
-    //           break;
-    //         }
-    //         //if we've matched all the way to the end of the arguments list with no extras stored in results
-    //         if (j === arguments.length-1 && results[i][0][j+1] !== undefined){
-    //           //return the memorized result
-    //           return results[i][1];
-    //         }
-    //       }
-    //     }
-    //     //if we've iterated through the entire results array, then the arguments must be novel
-    //     var currentResult = func.apply(this, arguments);
-    //     results.push([arguments, currentResult]);
-    //     return currentResult;
-    //   }
-    // }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -409,6 +371,8 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    setTimeout(function(){func.apply(this, args)}, wait);
   };
 
 
@@ -423,6 +387,28 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    //copy array
+    var shuffled = array.slice();
+    //set last shuffled index to end of array (no indices have been shuffled)
+    var last = shuffled.length;
+    //initialize a temporary storage variable (buffer) and a current index
+    var buffer, index;
+
+    //until the last shuffled index is at the front of the array
+    while(last){
+      //choose a random index to shuffle
+      index = Math.floor(Math.random() * last);
+      //decrement the last shuffled index
+      last--;
+
+      //do the switcheroo
+      buffer = shuffled[last];
+      shuffled[last] = shuffled[index];
+      shuffled[index] = buffer;
+    }
+
+    //done
+    return shuffled;
   };
 
 
