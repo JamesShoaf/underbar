@@ -353,6 +353,53 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var results = {};
+    return function(){
+      //if no results have been memorized
+      var argString = JSON.stringify(arguments);
+      if (results[argString] === undefined){
+        results[argString] = func.apply(this, arguments);
+      }
+      return results[argString];
+    }
+
+
+
+
+    //starting over with results array as an object instead
+    // var results = [];
+
+    // return function(){
+    //   //if no results have been memorized
+    //   if (results.length === 0){
+    //     //calculate the result of the current arguments
+    //     var currentResult = func.apply(this, arguments);
+    //     //and push the arguments and that result to the memorized results array
+    //     results.push([arguments, currentResult]);
+    //     return currentResult;
+    //   }
+    //   //if any results exist
+    //   else {
+    //     //iterate through the results array and arguments
+    //     for (var i = 0; i < results.length; i++) {
+    //       for (var j = 0; j < arguments.length; j++) {
+    //         //if any arguments mismatch, skip to the next [arguments, result] array in results
+    //         if (results[i][0][j] !== arguments[j]) {
+    //           break;
+    //         }
+    //         //if we've matched all the way to the end of the arguments list with no extras stored in results
+    //         if (j === arguments.length-1 && results[i][0][j+1] !== undefined){
+    //           //return the memorized result
+    //           return results[i][1];
+    //         }
+    //       }
+    //     }
+    //     //if we've iterated through the entire results array, then the arguments must be novel
+    //     var currentResult = func.apply(this, arguments);
+    //     results.push([arguments, currentResult]);
+    //     return currentResult;
+    //   }
+    // }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
